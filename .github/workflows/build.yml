@@ -1,36 +1,26 @@
 
-name: Build Local Drop APK
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-on:
-  workflow_dispatch:
-  push:
-    branches: [ main, master ]
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
+    <application
+        android:label="Local Drop"
+        android:usesCleartextTraffic="true"
+        android:theme="@android:style/Theme.Material.Light.NoActionBar">
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
 
-      - name: Setup JDK
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: '17'
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
 
-      - name: Install Gradle 8.9
-        run: |
-          wget -q https://services.gradle.org/distributions/gradle-8.9-bin.zip
-          unzip -q gradle-8.9-bin.zip
-          echo "$GITHUB_WORKSPACE/gradle-8.9/bin" >> "$GITHUB_PATH"
+        </activity>
 
-      - name: Build APK
-        run: gradle --version && gradle assembleDebug
+    </application>
 
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: Local-Drop-APK
-          path: app/build/outputs/apk/debug/*.apk
+</manifest>
