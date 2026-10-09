@@ -1,26 +1,35 @@
 
-<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+name: Build Local Drop APK
 
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, master]
 
-    <application
-        android:label="Local Drop"
-        android:usesCleartextTraffic="true"
-        android:theme="@android:style/Theme.Material.Light.NoActionBar">
+jobs:
+  build:
+    runs-on: ubuntu-latest
 
-        <activity
-            android:name=".MainActivity"
-            android:exported="true">
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
 
-        </activity>
+      - name: Install Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
 
-    </application>
+      - name: Build APK
+        run: gradle assembleDebug
 
-</manifest>
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Local-Drop-APK
+          path: app/build/outputs/apk/debug/*.apk
