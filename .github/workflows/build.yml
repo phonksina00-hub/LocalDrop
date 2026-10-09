@@ -20,13 +20,14 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Install Gradle
-        uses: gradle/actions/setup-gradle@v4
-        with:
-          validate-wrappers: false
+      - name: Install Gradle 8.9
+        run: |
+          wget -q https://services.gradle.org/distributions/gradle-8.9-bin.zip
+          unzip -q gradle-8.9-bin.zip
+          echo "$GITHUB_WORKSPACE/gradle-8.9/bin" >> "$GITHUB_PATH"
 
       - name: Build APK
-        run: gradle assembleDebug
+        run: gradle --version && gradle assembleDebug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
